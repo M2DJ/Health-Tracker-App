@@ -28,19 +28,19 @@ flutter_native_splash:
   android: true
   ios: true
 
-  color: "#218B7F"
+  color: "#FFFFFF"
   image: images/Splash_Screen_Logo.png
 
   android_12:
-    color: "#218B7F"
+    color: "#FFFFFF"
     image: images/Splash_Screen_Logo.png
 
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "images/App_Icon.png"
+  image_path: "images/Patient_Monitor_App_Icon.jpeg"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "images/App_Icon.png"
+  adaptive_icon_foreground: "images/Patient_Monitor_App_Icon.jpeg"
 
 flutter:
   uses-material-design: true
