@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Map recivedData;
+  late bool isTimePassed;
   List<Map> formattedData = [];
 
   final Map<String, LinearGradient> colorGradients = {
@@ -52,6 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
           isLoading = false;
 
           recivedData = response;
+          isTimePassed =
+              DateTime.now()
+                  .toUtc()
+                  .difference(DateTime.parse(recivedData['created_at']).toUtc())
+                  .inMinutes >=
+              20;
           formatRecivedData();
           debugPrint('Data fetched');
         }
@@ -313,398 +320,200 @@ class _HomeScreenState extends State<HomeScreen> {
             The containers that will hold the data
             
             */
-            body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Column(
-                children: [
-                  /*
+            body: isTimePassed
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 250,
+                          child: Text(
+                            'Connect device to show data',
+                            style: TextStyle(
+                              fontSize: 50,
+                              color: AppConstants.mainColor,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Column(
+                      children: [
+                        /*
                   
                   The map section
                   
                   */
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 23,
-                        height: 23,
-                        decoration: BoxDecoration(color: AppConstants.green),
-                      ),
-                      SizedBox(width: 3),
-                      Text(
-                        "Good",
-                        style: TextStyle(fontSize: 17, fontFamily: "Inter"),
-                      ),
-                      SizedBox(width: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 23,
+                              height: 23,
+                              decoration: BoxDecoration(
+                                color: AppConstants.green,
+                              ),
+                            ),
+                            SizedBox(width: 3),
+                            Text(
+                              "Good",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Inter",
+                              ),
+                            ),
+                            SizedBox(width: 6),
 
-                      Container(
-                        width: 23,
-                        height: 23,
-                        decoration: BoxDecoration(color: AppConstants.yellow),
-                      ),
-                      SizedBox(width: 3),
-                      Text(
-                        "Could be better",
-                        style: TextStyle(fontSize: 17, fontFamily: "Inter"),
-                      ),
-                      SizedBox(width: 6),
+                            Container(
+                              width: 23,
+                              height: 23,
+                              decoration: BoxDecoration(
+                                color: AppConstants.yellow,
+                              ),
+                            ),
+                            SizedBox(width: 3),
+                            Text(
+                              "Could be better",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Inter",
+                              ),
+                            ),
+                            SizedBox(width: 6),
 
-                      Container(
-                        width: 23,
-                        height: 23,
-                        decoration: BoxDecoration(color: AppConstants.red),
-                      ),
-                      SizedBox(width: 3),
-                      Text(
-                        "Danger",
-                        style: TextStyle(fontSize: 17, fontFamily: "Inter"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Text(
-                        "(Last updated ${DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()).toString()})",
-                        style: TextStyle(fontSize: 16, fontFamily: "Inter"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15),
+                            Container(
+                              width: 23,
+                              height: 23,
+                              decoration: BoxDecoration(
+                                color: AppConstants.red,
+                              ),
+                            ),
+                            SizedBox(width: 3),
+                            Text(
+                              "Danger",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Inter",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Text(
+                              "(Last updated ${DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()).toString()})",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: "Inter",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15),
 
-                  /*
+                        /*
                   
                   Containers
                   
                   */
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: formattedData.length,
-                      itemBuilder: (context, index) {
-                        var data = formattedData[index];
-                        var measurementSplit = data['measurement'].split(" ");
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: formattedData.length,
+                            itemBuilder: (context, index) {
+                              var data = formattedData[index];
+                              var measurementSplit = data['measurement'].split(
+                                " ",
+                              );
 
-                        return Container(
-                          height: 140,
-                          width: 390,
-                          margin: EdgeInsets.only(bottom: 15),
-                          decoration: BoxDecoration(
-                            color: AppConstants.green,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(0, 0, 0, 0.50),
-                                blurRadius: 8,
-                                offset: Offset(0, 0),
-                              ),
-                            ],
-                            gradient: data['color gradient'],
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  children: [
-                                    Image(
-                                      image: AssetImage(
-                                        data['measurement icon'],
-                                      ),
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                    Text(
-                                      data['measurement title'],
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontFamily: "Inter",
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
+                              return Container(
+                                height: 140,
+                                width: 390,
+                                margin: EdgeInsets.only(bottom: 15),
+                                decoration: BoxDecoration(
+                                  color: AppConstants.green,
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromRGBO(0, 0, 0, 0.50),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 0),
                                     ),
                                   ],
+                                  gradient: data['color gradient'],
                                 ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Image(
+                                            image: AssetImage(
+                                              data['measurement icon'],
+                                            ),
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                          Text(
+                                            data['measurement title'],
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: "Inter",
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      measurementSplit[0],
-                                      style: TextStyle(
-                                        fontSize: 36,
-                                        fontFamily: "Inter",
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            measurementSplit[0],
+                                            style: TextStyle(
+                                              fontSize: 36,
+                                              fontFamily: "Inter",
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              measurementSplit[1],
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontFamily: "Inter",
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                      child: Text(
-                                        measurementSplit[1],
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontFamily: "Inter",
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
                   ),
-
-                  // SizedBox(height: 15),
-
-                  // Container(
-                  //   height: 140,
-                  //   width: 390,
-                  //   decoration: BoxDecoration(
-                  //     color: AppConstants.yellow,
-                  //     borderRadius: BorderRadius.circular(15),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Color.fromRGBO(0, 0, 0, 0.50),
-                  //         blurRadius: 8,
-                  //         offset: Offset(0, 0),
-                  //       ),
-                  //     ],
-                  //     gradient: LinearGradient(
-                  //       colors: [
-                  //         AppConstants.yellow,
-                  //         AppConstants.yellowGradient,
-                  //       ],
-                  //       stops: [0.0, 1.0],
-                  //       begin: Alignment.topCenter,
-                  //       end: Alignment.bottomCenter,
-                  //     ),
-                  //   ),
-                  //   child: Padding(
-                  //     padding: EdgeInsets.all(8),
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         Column(
-                  //           children: [
-                  //             Image(
-                  //               image: AssetImage("images/Oxygen_Level.png"),
-                  //               width: 40,
-                  //               height: 40,
-                  //             ),
-                  //             Text(
-                  //               "Oxygen Saturation Level",
-                  //               style: TextStyle(
-                  //                 fontSize: 20,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           crossAxisAlignment: CrossAxisAlignment.end,
-                  //           children: [
-                  //             Text(
-                  //               "90",
-                  //               style: TextStyle(
-                  //                 fontSize: 36,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //             Padding(
-                  //               padding: EdgeInsets.only(bottom: 5),
-                  //               child: Text(
-                  //                 "%",
-                  //                 style: TextStyle(
-                  //                   fontSize: 24,
-                  //                   fontFamily: "Inter",
-                  //                   fontWeight: FontWeight.bold,
-                  //                   color: Colors.white,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 15),
-
-                  // Container(
-                  //   height: 140,
-                  //   width: 390,
-                  //   decoration: BoxDecoration(
-                  //     color: AppConstants.green,
-                  //     borderRadius: BorderRadius.circular(15),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Color.fromRGBO(0, 0, 0, 0.50),
-                  //         blurRadius: 8,
-                  //         offset: Offset(0, 0),
-                  //       ),
-                  //     ],
-                  //     gradient: LinearGradient(
-                  //       colors: [
-                  //         AppConstants.green,
-                  //         AppConstants.greenGradient,
-                  //       ],
-                  //       stops: [0.2, 0.78],
-                  //       begin: Alignment.topCenter,
-                  //       end: Alignment.bottomCenter,
-                  //     ),
-                  //   ),
-                  //   child: Padding(
-                  //     padding: EdgeInsets.all(8),
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         Column(
-                  //           children: [
-                  //             Image(
-                  //               image: AssetImage("images/Oxygen_Level.png"),
-                  //               width: 40,
-                  //               height: 40,
-                  //             ),
-                  //             Text(
-                  //               "Oxygen Saturation Level",
-                  //               style: TextStyle(
-                  //                 fontSize: 20,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           crossAxisAlignment: CrossAxisAlignment.end,
-                  //           children: [
-                  //             Text(
-                  //               "90",
-                  //               style: TextStyle(
-                  //                 fontSize: 36,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //             Padding(
-                  //               padding: EdgeInsets.only(bottom: 5),
-                  //               child: Text(
-                  //                 "%",
-                  //                 style: TextStyle(
-                  //                   fontSize: 24,
-                  //                   fontFamily: "Inter",
-                  //                   fontWeight: FontWeight.bold,
-                  //                   color: Colors.white,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 15),
-
-                  // Container(
-                  //   height: 140,
-                  //   width: 390,
-                  //   decoration: BoxDecoration(
-                  //     color: AppConstants.red,
-                  //     borderRadius: BorderRadius.circular(15),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Color.fromRGBO(0, 0, 0, 0.50),
-                  //         blurRadius: 8,
-                  //         offset: Offset(0, 0),
-                  //       ),
-                  //     ],
-                  //     gradient: LinearGradient(
-                  //       colors: [AppConstants.red, AppConstants.redGradient],
-                  //       stops: [0.0, 0.5],
-                  //       begin: Alignment.topCenter,
-                  //       end: Alignment.bottomCenter,
-                  //     ),
-                  //   ),
-                  //   child: Padding(
-                  //     padding: EdgeInsets.all(8),
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         Column(
-                  //           children: [
-                  //             Image(
-                  //               image: AssetImage("images/Oxygen_Level.png"),
-                  //               width: 40,
-                  //               height: 40,
-                  //             ),
-                  //             Text(
-                  //               "Oxygen Saturation Level",
-                  //               style: TextStyle(
-                  //                 fontSize: 20,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           crossAxisAlignment: CrossAxisAlignment.end,
-                  //           children: [
-                  //             Text(
-                  //               "90",
-                  //               style: TextStyle(
-                  //                 fontSize: 36,
-                  //                 fontFamily: "Inter",
-                  //                 fontWeight: FontWeight.bold,
-                  //                 color: Colors.white,
-                  //               ),
-                  //             ),
-                  //             Padding(
-                  //               padding: EdgeInsets.only(bottom: 5),
-                  //               child: Text(
-                  //                 "%",
-                  //                 style: TextStyle(
-                  //                   fontSize: 24,
-                  //                   fontFamily: "Inter",
-                  //                   fontWeight: FontWeight.bold,
-                  //                   color: Colors.white,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
           );
   }
 }
