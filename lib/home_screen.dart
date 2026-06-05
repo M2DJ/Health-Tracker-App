@@ -207,8 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     } else if (int.parse(bloodPressureMeasure[0]) >= 140 &&
-        int.parse(bloodPressureMeasure[1]) >= 101 || int.parse(bloodPressureMeasure[0]) < 100 &&
-        int.parse(bloodPressureMeasure[1]) < 80) {
+            int.parse(bloodPressureMeasure[1]) >= 101 ||
+        int.parse(bloodPressureMeasure[0]) < 100 &&
+            int.parse(bloodPressureMeasure[1]) < 80) {
       formattedData.add(
         _buildMap(
           "images/Blood_Pressure.png",
@@ -280,12 +281,12 @@ class _HomeScreenState extends State<HomeScreen> {
             appBar: AppBar(
               title: Row(
                 children: [
-                  Image(
-                    image: AssetImage('images/Leading_Logo.png'),
-                    width: 45,
-                    height: 45,
-                  ),
-                  SizedBox(width: 3),
+                  // Image(
+                  //   image: AssetImage('images/Leading_Logo.png'),
+                  //   width: 45,
+                  //   height: 45,
+                  // ),
+                  // SizedBox(width: 3),
                   Text(
                     "Results",
                     style: TextStyle(
