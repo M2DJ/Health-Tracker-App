@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(home: HomeScreen());
+    return GetMaterialApp(
+      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
