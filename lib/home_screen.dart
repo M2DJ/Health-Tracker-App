@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   };
 
   final tableService = SupabaseTableService();
-  bool isLoading = true;
+  bool isLoading = false;
 
   void loadUserData() async {
     try {
@@ -68,13 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadUserData();
-  }
-
   void formatRecivedData() {
+    formattedData.clear();
     final bodyTemp = (recivedData['body_temp'] as num).toDouble();
     final spo2 = int.parse(recivedData['spo2'].toString());
     final hearRate = recivedData['bbm'].toString();
@@ -245,6 +240,34 @@ class _HomeScreenState extends State<HomeScreen> {
       "measurement": measurement,
       "color gradient": colorGradient,
     };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+    tableService.subscribeToTable1(
+      onNewRow: (newRecord) {
+        setState(() {
+          isLoading = true;
+          recivedData = newRecord;
+          isTimePassed =
+              DateTime.now()
+                  .toUtc()
+                  .difference(DateTime.parse(recivedData['created_at']).toUtc())
+                  .inMinutes >=
+              20;
+          formatRecivedData();
+          isLoading = false;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    tableService.unsubscribe();
+    super.dispose();
   }
 
   @override
